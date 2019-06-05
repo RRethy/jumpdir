@@ -17,4 +17,4 @@ File.open("#{ENV['HOME']}/.local/share/jr/data.txt") do |f|
   end
 end
 
-puts dirs.join(",")
+puts dirs.join(" ")

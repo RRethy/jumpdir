@@ -4,8 +4,6 @@ if /^\.{1,2}$/ =~ Dir.pwd || Dir.pwd == ENV['HOME']
   exit
 end
 
-puts Dir.pwd
-
 unless Dir.exist?("#{ENV['HOME']}/.local/share/jr")
   FileUtils.mkdir_p "#{ENV['HOME']}/.local/share/jr"
 end

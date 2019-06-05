@@ -1,8 +1,12 @@
 require 'fileutils'
 
-if !File.exist?("#{ENV['HOME']}/.local/share/jr/data.txt")\
-    || ARGV.length != 1
+unless File.exist?("#{ENV['HOME']}/.local/share/jr/data.txt")
   puts Dir.pwd
+  exit
+end
+
+unless ARGV.length == 1
+  puts ENV['HOME']
   exit
 end
 
