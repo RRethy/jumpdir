@@ -9,7 +9,7 @@ end
 File.open("#{ENV['HOME']}/.local/share/jr/data.txt") do |f|
   f.each_line do |line|
     dir, = line.split
-    if /#{ARGV[0]}/ =~ dir.downcase
+    if /#{ARGV[0].downcase}/ =~ dir.downcase
       puts dir
       exit
     end
