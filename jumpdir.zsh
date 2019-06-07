@@ -9,9 +9,9 @@ function storepwd {
 }
 
 function jd {
-    cd $(ruby ~/ruby/jumpdir/jumpdir.rb --jump=$1)
+  cd $(ruby ~/ruby/jumpdir/jumpdir.rb --jump $1)
 }
 
 function _jd {
-    compadd -U $(ruby ~/ruby/jumpdir/comp.rb $PREFIX)
+  compadd -U $(ruby ~/ruby/jumpdir/jumpdir.rb --complete $PREFIX)
 }

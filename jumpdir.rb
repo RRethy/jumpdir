@@ -9,7 +9,8 @@ end
 opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--mark', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--jump', '-j', GetoptLong::OPTIONAL_ARGUMENT ]
+  [ '--jump', '-j', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--complete', '-c', GetoptLong::OPTIONAL_ARGUMENT ]
 )
 
 # TODO these should be handled better
@@ -53,6 +54,8 @@ def mark_pwd
 end
 
 def jump_dir(dir)
+  return ENV['HOME'] if dir.empty?
+
   unless File.exist?(@data_file)
     puts Dir.pwd
     return
@@ -71,6 +74,23 @@ def jump_dir(dir)
   puts Dir.pwd
 end
 
+def complete(str)
+  return unless File.exists?(@data_file)
+
+  results = []
+
+  File.open(@data_file) do |f|
+    f.each_line do |line|
+      dir, = line.split
+      if dir.downcase =~ /#{str.downcase}/
+        results.push dir
+      end
+    end
+  end
+
+  puts results.join(' ')
+end
+
 opts.each do |opt, arg|
   case opt
   when '--help'
@@ -79,5 +99,7 @@ opts.each do |opt, arg|
     mark_pwd
   when '--jump'
     jump_dir arg
+  when '--complete'
+    complete arg
   end
 end
