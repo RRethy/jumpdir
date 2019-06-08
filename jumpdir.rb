@@ -9,14 +9,16 @@ end
 opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--incdir', '-i', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--jump', '-j', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--jumpdir', '-j', GetoptLong::OPTIONAL_ARGUMENT ],
   [ '--complete', '-c', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--markdir', '-m', GetoptLong::REQUIRED_ARGUMENT ]
+  [ '--markdir', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--jumpmark', GetoptLong::OPTIONAL_ARGUMENT ]
 )
 
 # TODO these should be handled better
 @data_dir = "#{ENV['HOME']}/.local/share/jumpdir"
 @data_file = "#{@data_dir}/data.txt"
+@marks_file = "#{@data_dir}/marks.txt"
 
 def print_help
   puts 'TODO: write help'
@@ -24,8 +26,6 @@ end
 
 def inc_dir(dir)
   return if dir == ENV['HOME']
-
-  FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
 
   paths = []
   matched = false
@@ -92,10 +92,54 @@ def complete(str)
   puts results.join(' ')
 end
 
-def markdir(mark)
+def mark_dir(mark)
+  return unless mark =~ /\w/
+
+  marks_data = []
+  matched = false
+
+  File.open(@marks_file) do |f|
+    f.each_line do |line|
+      path, tag = line.split
+      if tag == mark
+        path = Dir.pwd
+        matched = true
+      end
+      marks_data.push [path, tag]
+    end
+  end if File.exist?(@marks_file)
+
+  marks_data.push([ Dir.pwd, mark ]) unless matched
+
+  File.open(@marks_file, 'w') do |f|
+    marks_data.each do |pair|
+      f.puts "#{pair[0]} #{pair[1]}"
+    end
+  end
+end
+
+def jump_mark(mark)
+  unless mark =~ /\w/ && File.exist?(@marks_file)
+    puts Dir.pwd
+    return
+  end
+
+  File.open(@marks_file) do |f|
+    f.each_line do |line|
+      path, tag = line.split
+      if tag == mark
+        puts path
+        return
+      end
+    end
+  end
+
+  puts Dir.pwd
 end
 
 opts.each do |opt, arg|
+  FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
+
   case opt
   when '--help'
     print_help
@@ -105,11 +149,13 @@ opts.each do |opt, arg|
     else
       inc_dir arg
     end
-  when '--jump'
+  when '--jumpdir'
     jump_dir arg
   when '--complete'
     complete arg
   when '--markdir'
-    markdir arg
+    mark_dir arg
+  when '--jumpmark'
+    jump_mark arg
   end
 end
