@@ -5,7 +5,7 @@ compdef _jd jd
 chpwd_functions+=(storepwd)
 
 function storepwd {
-  ruby ~/ruby/jumpdir/jumpdir.rb --mark
+  ruby ~/ruby/jumpdir/jumpdir.rb --incdir
 }
 
 function jd {

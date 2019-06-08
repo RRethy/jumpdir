@@ -8,9 +8,10 @@ end
 
 opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--mark', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--incdir', '-i', GetoptLong::OPTIONAL_ARGUMENT ],
   [ '--jump', '-j', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--complete', '-c', GetoptLong::OPTIONAL_ARGUMENT ]
+  [ '--complete', '-c', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--markdir', '-m', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
 # TODO these should be handled better
@@ -21,33 +22,33 @@ def print_help
   puts 'TODO: write help'
 end
 
-def mark_pwd
-  return if Dir.pwd == ENV['HOME']
+def inc_dir(dir)
+  return if dir == ENV['HOME']
 
   FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
 
-  dirs = []
+  paths = []
   matched = false
 
   if File.exist?(@data_file)
     File.open(@data_file) do |f|
       f.each_line do |line|
-        dir, val = line.split
+        path, val = line.split
         val = val.to_i
-        if Dir.pwd == dir
+        if dir == path
           val += 1
           matched = true
         end
-        dirs.push [dir, val]
+        paths.push [path, val]
       end
     end
   end
 
-  dirs.push([ Dir.pwd, 1 ]) unless matched
-  dirs.sort! { |a,b| b[1] <=> a[1] }
+  paths.push([ dir, 1 ]) unless matched
+  paths.sort! { |a,b| b[1] <=> a[1] }
 
   File.open(@data_file, 'w') do |f|
-    dirs.each do |pair|
+    paths.each do |pair|
       f.puts "#{pair[0]} #{pair[1]}"
     end
   end
@@ -91,15 +92,24 @@ def complete(str)
   puts results.join(' ')
 end
 
+def markdir(mark)
+end
+
 opts.each do |opt, arg|
   case opt
   when '--help'
     print_help
-  when '--mark'
-    mark_pwd
+  when '--incdir'
+    if arg.empty?
+      inc_dir Dir.pwd
+    else
+      inc_dir arg
+    end
   when '--jump'
     jump_dir arg
   when '--complete'
     complete arg
+  when '--markdir'
+    markdir arg
   end
 end
