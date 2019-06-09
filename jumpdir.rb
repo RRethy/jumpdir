@@ -16,13 +16,45 @@ opts = GetoptLong.new(
   [ '--jumpchild', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
-# TODO these should be handled better
 @data_dir = "#{ENV['HOME']}/.local/share/jumpdir"
 @data_file = "#{@data_dir}/data.txt"
 @marks_file = "#{@data_dir}/marks.txt"
 
 def print_help
-  puts 'TODO: write help'
+  puts <<-EOF
+ruby jumpdir.rb [OPTION]
+
+jumpdir is a script to manage and print directories. It can be used in
+conjunction with cd to jump to directories around the filesystem.
+
+OPTIONS:
+
+--help, -h:
+    show help
+
+--incdir dir, -i dir:
+    increase the ranking associate with dir, dir will default to pwd if omitted
+
+--jumpdir keyword, -j keyword:
+    print to stdout the highest ranking directory being tracked which matches
+    keyword, $HOME will be printed if keyword is omitted
+
+--complete keyword, -c keyword:
+    print to stdout all directories being tracked in ranking order which match
+    keyword, all directories will be printed if keyword is omitted
+
+--markdir x, -m x:
+    associate the directory with the mark x so it can be jumped to using
+    --jumpmark x, x must match [0-9a-zA-Z]
+
+--jumpmark x:
+    print the directory marked by x
+
+--jumpchild keyword:
+    print the first directory which matches keyword and is a child of pwd, BFS
+    will be used to find child directories which match
+
+  EOF
 end
 
 def inc_dir(dir)
