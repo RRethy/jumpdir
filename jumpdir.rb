@@ -1,6 +1,5 @@
 require 'getoptlong'
 require 'fileutils'
-require 'find'
 
 if ARGV.length == 0
   puts 'Expecting an option but found none.'
@@ -140,14 +139,25 @@ def jump_mark(mark)
 end
 
 def jump_child(child)
-  Find.find(Dir.pwd) do |path|
-    if File.directory?(path)
-      if path.downcase =~ /#{child.downcase}/
-        puts path
-        return
+  # Use a Queue instead of Find.find to force BFS
+  queue = Queue.new
+  queue.push Dir.pwd
+  while !queue.empty? do
+    dir = queue.pop
+    Dir.each_child(dir) do |fname|
+      fullpath = "#{dir}/#{fname}"
+      if File.directory?(fullpath)
+        if fname.downcase =~ /#{child}/
+          puts fullpath
+          return
+        else
+          queue.push fullpath
+        end
       end
     end
   end
+
+  puts Dir.pwd
 end
 
 opts.each do |opt, arg|
