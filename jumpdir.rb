@@ -1,5 +1,6 @@
 require 'getoptlong'
 require 'fileutils'
+require 'find'
 
 if ARGV.length == 0
   puts 'Expecting an option but found none.'
@@ -12,7 +13,8 @@ opts = GetoptLong.new(
   [ '--jumpdir', '-j', GetoptLong::OPTIONAL_ARGUMENT ],
   [ '--complete', '-c', GetoptLong::OPTIONAL_ARGUMENT ],
   [ '--markdir', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--jumpmark', GetoptLong::OPTIONAL_ARGUMENT ]
+  [ '--jumpmark', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--jumpchild', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
 # TODO these should be handled better
@@ -137,6 +139,17 @@ def jump_mark(mark)
   puts Dir.pwd
 end
 
+def jump_child(child)
+  Find.find(Dir.pwd) do |path|
+    if File.directory?(path)
+      if path.downcase =~ /#{child.downcase}/
+        puts path
+        return
+      end
+    end
+  end
+end
+
 opts.each do |opt, arg|
   FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
 
@@ -157,5 +170,7 @@ opts.each do |opt, arg|
     mark_dir arg
   when '--jumpmark'
     jump_mark arg
+  when '--jumpchild'
+    jump_child arg
   end
 end

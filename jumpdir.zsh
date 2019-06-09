@@ -8,6 +8,12 @@ function storepwd {
   ruby ~/ruby/jumpdir/jumpdir.rb --incdir $(pwd)
 }
 
+function jc {
+  if [[ -n "$1" ]]; then
+    cd $(ruby ~/ruby/jumpdir/jumpdir.rb --jumpchild $1)
+  fi
+}
+
 function jd {
   cd $(ruby ~/ruby/jumpdir/jumpdir.rb --jumpdir $1)
 }
