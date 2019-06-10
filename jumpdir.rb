@@ -3,7 +3,7 @@ require 'fileutils'
 
 if ARGV.length == 0
   STDERR.puts 'Expecting an option but found none.'
-  exit 1
+  exit 2
 end
 
 opts = GetoptLong.new(
