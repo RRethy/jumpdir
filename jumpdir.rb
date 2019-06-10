@@ -16,9 +16,11 @@ opts = GetoptLong.new(
   [ '--jumpchild', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
-@data_dir = "#{ENV['HOME']}/.local/share/jumpdir"
+ENV['XDG_DATA_DIR'] = "#{ENV['HOME']}/.local/share" unless ENV['XDG_DATA_DIR'] && !ENV['XDG_DATA_DIR'].empty?
+@data_dir = "#{ENV['XDG_DATA_DIR']}/jumpdir"
 @data_file = "#{@data_dir}/data.txt"
 @marks_file = "#{@data_dir}/marks.txt"
+FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
 
 def print_help
   puts <<-EOF
@@ -199,8 +201,6 @@ def jump_child(child)
 end
 
 opts.each do |opt, arg|
-  FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
-
   case opt
   when '--help'
     print_help
