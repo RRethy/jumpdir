@@ -72,7 +72,9 @@ def inc_dir(dir)
           val += 1
           matched = true
         end
-        paths.push [path, val]
+        if Dir.exist?(path)
+          paths.push [path, val]
+        end
       end
     end
   end
