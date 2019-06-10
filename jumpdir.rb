@@ -2,7 +2,7 @@ require 'getoptlong'
 require 'fileutils'
 
 if ARGV.length == 0
-  puts 'Expecting an option but found none.'
+  STDERR.puts 'Expecting an option but found none.'
   exit 1
 end
 
