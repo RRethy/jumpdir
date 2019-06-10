@@ -98,7 +98,7 @@ def jump_dir(dir)
   File.open(@data_file) do |f|
     f.each_line do |line|
       path, = line.split
-      if /#{dir.downcase}/ =~ path.downcase
+      if path.downcase.split('/')[-1].include?(dir.downcase)
         puts path
         return
       end
@@ -115,9 +115,9 @@ def complete(str)
 
   File.open(@data_file) do |f|
     f.each_line do |line|
-      dir, = line.split
-      if dir.downcase =~ /#{str.downcase}/
-        results.push dir
+      path, = line.split
+      if path.downcase.include?(str.downcase)
+        results.push path
       end
     end
   end
@@ -179,7 +179,7 @@ def jump_child(child)
     Dir.each_child(dir) do |fname|
       fullpath = "#{dir}/#{fname}"
       if File.directory?(fullpath)
-        if fname.downcase =~ /#{child}/
+        if fname.downcase.include?(child.downcase)
           puts fullpath
           return
         else
