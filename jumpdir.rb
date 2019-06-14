@@ -1,11 +1,6 @@
 require 'getoptlong'
 require 'fileutils'
 
-if ARGV.length == 0
-  STDERR.puts 'Expecting an option but found none.'
-  exit 2
-end
-
 opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--incdir', '-i', GetoptLong::OPTIONAL_ARGUMENT ],
@@ -198,6 +193,11 @@ def jump_child(child)
   end
 
   puts Dir.pwd
+end
+
+if ARGV.length == 0
+  print_help
+  exit 2
 end
 
 opts.each do |opt, arg|
