@@ -94,7 +94,7 @@ def jump_dir(dir)
     return
   end
 
-  segments = dir.count '/'
+  segments = dir.count('/') + 1
 
   File.open(@data_file) do |f|
     f.each_line do |line|
