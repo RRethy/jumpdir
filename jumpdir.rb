@@ -94,11 +94,15 @@ def jump_dir(dir)
     return
   end
 
+  segments = dir.count '/'
+
   File.open(@data_file) do |f|
     f.each_line do |line|
       path, = line.split
-      if path.downcase.split('/')[-1].include?(dir.downcase)\
-          && Dir.exist?(path)
+      if "/#{path.downcase.split('/')\
+        .last(segments).join('/')}"\
+        .include?(dir.downcase)\
+      && Dir.exist?(path)
         puts path
         return
       end
