@@ -1,6 +1,38 @@
 # Jumpdir
 
-# Usage
+## Usage
+
+```sh
+# Change pwd to a directory which contains name
+# Support tab completion
+jd name
+
+# Change pwd to a previously specified mark
+jm mark
+
+# Tie pwd to mark which can be jumped to using jm
+m mark
+
+# Jump to a child directory of pwd which contains name in the tail of the path
+jc name
+```
+
+## Requirements
+
+* OSX or Linux
+* zsh - (currently relies on `chpwd` to track directory changes which is zsh specific)
+
+## Installation
+
+Clone the repo and add the following to your `~/.zshrc`:
+
+```sh
+source <path-to-repo>/jumpdir.zsh
+```
+
+## Usage of jumpdir.rb
+
+This is only usage for the ruby script.
 
 ```
 ruby jumpdir.rb [OPTION]
@@ -35,8 +67,3 @@ OPTIONS:
     print the first directory which matches keyword and is a child of pwd, BFS
     will be used to find child directories which match
 ```
-
-## TODO
-
-1. Write README
-2. Fix bug where selection a completion candidate doesn't work due to matching algo
