@@ -12,10 +12,10 @@ opts = GetoptLong.new(
 )
 
 ENV['XDG_DATA_DIR'] = "#{ENV['HOME']}/.local/share" unless ENV['XDG_DATA_DIR'] && !ENV['XDG_DATA_DIR'].empty?
-@data_dir = "#{ENV['XDG_DATA_DIR']}/jumpdir"
-@data_file = "#{@data_dir}/data.txt"
-@marks_file = "#{@data_dir}/marks.txt"
-FileUtils.mkdir_p(@data_dir) unless Dir.exist?(@data_dir)
+$data_dir = "#{ENV['XDG_DATA_DIR']}/jumpdir"
+$data_file = "#{$data_dir}/data.txt"
+$marks_file = "#{$data_dir}/marks.txt"
+FileUtils.mkdir_p($data_dir) unless Dir.exist?($data_dir)
 
 def print_help
   puts <<-EOF
@@ -60,8 +60,8 @@ def inc_dir(dir)
   paths = []
   matched = false
 
-  if File.exist?(@data_file)
-    File.open(@data_file) do |f|
+  if File.exist?($data_file)
+    File.open($data_file) do |f|
       f.each_line do |line|
         path, val = line.split
         val = val.to_i
@@ -79,7 +79,7 @@ def inc_dir(dir)
   paths.push([ dir, 1 ]) unless matched
   paths.sort! { |a,b| b[1] <=> a[1] }
 
-  File.open(@data_file, 'w') do |f|
+  File.open($data_file, 'w') do |f|
     paths.each do |pair|
       f.puts "#{pair[0]} #{pair[1]}"
     end
@@ -89,14 +89,14 @@ end
 def jump_dir(dir)
   return ENV['HOME'] if dir.empty?
 
-  unless File.exist?(@data_file)
+  unless File.exist?($data_file)
     puts Dir.pwd
     return
   end
 
   segments = dir.count('/') + 1
 
-  File.open(@data_file) do |f|
+  File.open($data_file) do |f|
     f.each_line do |line|
       path, = line.split
       if "/#{path.downcase.split('/')\
@@ -113,11 +113,11 @@ def jump_dir(dir)
 end
 
 def complete(str)
-  return unless File.exists?(@data_file)
+  return unless File.exists?($data_file)
 
   results = []
 
-  File.open(@data_file) do |f|
+  File.open($data_file) do |f|
     f.each_line do |line|
       path, = line.split
       if path.downcase.include?(str.downcase)\
@@ -136,7 +136,7 @@ def mark_dir(mark)
   marks_data = []
   matched = false
 
-  File.open(@marks_file) do |f|
+  File.open($marks_file) do |f|
     f.each_line do |line|
       path, tag = line.split
       if tag == mark
@@ -145,11 +145,11 @@ def mark_dir(mark)
       end
       marks_data.push [path, tag]
     end
-  end if File.exist?(@marks_file)
+  end if File.exist?($marks_file)
 
   marks_data.push([ Dir.pwd, mark ]) unless matched
 
-  File.open(@marks_file, 'w') do |f|
+  File.open($marks_file, 'w') do |f|
     marks_data.each do |pair|
       f.puts "#{pair[0]} #{pair[1]}"
     end
@@ -157,12 +157,12 @@ def mark_dir(mark)
 end
 
 def jump_mark(mark)
-  unless mark =~ /\w/ && File.exist?(@marks_file)
+  unless mark =~ /\w/ && File.exist?($marks_file)
     puts Dir.pwd
     return
   end
 
-  File.open(@marks_file) do |f|
+  File.open($marks_file) do |f|
     f.each_line do |line|
       path, tag = line.split
       if tag == mark\
